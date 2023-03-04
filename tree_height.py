@@ -1,7 +1,7 @@
 # python3
 import sys
-from threading import Thread
 import numpy as np
+import threading
 
 def get_height(i, values, heights):
     if heights[i] != 0:
@@ -35,8 +35,8 @@ def read_input():
             
         elif source == 'F':
             filename = input("Enter file name: ")
-            if 'a' in filename:
-                return None, None
+            if 'a' in filename.lower():
+                return 0, np.array([])
 
             try:
                 with open(f"./test/{filename}", "r") as file:
@@ -50,11 +50,12 @@ def read_input():
 
 def main():
     n, values = read_input()
-    if n is None or values is None:
+    if n == 0 or values.size == 0:
         return
     max_height = compute_height(n, values)
     print(max_height)
 
-if __name__ == '__main__':
+    if __name__ == '__main__':
     sys.setrecursionlimit(10 ** 7)
-    Thread(target=main).start()
+    threading.stack_size(2 ** 27)
+    threading.Thread(target=main).start()
