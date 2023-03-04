@@ -1,50 +1,59 @@
 # python3
 import sys
 import threading
+import numpy as np
 
-def compute_height(n, parents):
-    # Write this function
-    children = {i: [] for i in range(n)}
+def compute_height(n: int, par: list[int]) -> int:
+    h = np.zeros(n, dtype=int)
+    maxh = -1
 
-    # populate the children dictionary
-    for i, p in enumerate(parents):
-        if p == -1:
-            root = i
-        else:
-            children[p].append(i)
+    for i, _ in enumerate(par):
+        l = i
+        h_i = 1
 
-    def height(node):
-        if not children[node]:
-            return 1
-        return 1 + max(height(child) for child in children[node])
+        while par[l] != -1:
+            if h[l] != 0:
+                h_i += h[l] - 1
+                break
+
+            h_i += 1
+            l = par[l]
+
+        h[i] = h_i
+        maxh = max(maxh, h[i])
 
     # compute the height of the tree rooted at the root node
-    return height(root)
+    return maxh
 
-def main():
+def main() -> None:
     # let user input file name to use
-    if len(sys.argv) > 1:
-        # read input from file
-        filename = sys.argv[1]
-        with open(filename, 'r') as f:
-            n = int(f.readline().strip())
-            parents = list(map(int, f.readline().strip().split()))
-    else:
-        # read input from keyboard
-        while True:
-            try:
-                n = int(input())
-                break
-            except ValueError:
-                print("Invalid input. Please enter numeric values only.")
-        parents = list(map(int, input().strip().split()))
+    txt = input()
+    if 'F' in txt:
+        file = input()
+        file = f"test/{file}"
 
-    max_height = compute_height(n, parents)
-    print(max_height)
+        if 'a' not in file:
+            try:
+                with open(file, "r") as f:
+                    n = int(f.readline())
+                    par = list(map(int, f.readline().split()))
+                    print(compute_height(n, par))
+
+            except FileNotFoundError:
+                print("not found")
+                return
+
+    if 'I' in txt:
+        n = int(input())
+        par = list(map(int, input().split()))
+        print(compute_height(n, par))
+
 
 # In Python, the default limit on recursion depth is rather low,
 # so raise it here for this problem. Note that to take advantage
 # of bigger stack, we have to launch the computation in a new thread.
-sys.setrecursionlimit(10**7)  # max depth of recursion
-threading.stack_size(2**27)   # new thread will get stack of such size
-threading.Thread(target=main).start()
+if __name__ == '__main__':
+    sys.setrecursionlimit(10 ** 7)
+    threading.stack_size(2 ** 27)
+    threading.Thread(target=main).start()
+ # max depth of recursion # new thread will get stack of such size
