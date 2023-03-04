@@ -3,57 +3,64 @@ import sys
 import threading
 import numpy as np
 
-def compute_height(n: int, par: list[int]) -> int:
-    h = np.zeros(n, dtype=int)
-    maxh = -1
 
-    for i, _ in enumerate(par):
-        l = i
-        h_i = 1
+def compute_height(n: int, values: np.ndarray) -> int:
+    max_height = 0
+    heights = np.zeros(n, dtype=int)
 
-        while par[l] != -1:
-            if h[l] != 0:
-                h_i += h[l] - 1
-                break
+    def get_height(i: int) -> int:
+        if heights[i] != 0:
+            return heights[i]
 
-            h_i += 1
-            l = par[l]
+        if values[i] == -1:
+            heights[i] = 1
+        else:
+            heights[i] = get_height(values[i]) + 1
 
-        h[i] = h_i
-        maxh = max(maxh, h[i])
+        return heights[i]
 
-    # compute the height of the tree rooted at the root node
-    return maxh
+    for i in range(n):
+        height = get_height(i)
+        if height > max_height:
+            max_height = height
+    
+    return max_height
+
 
 def main() -> None:
-    # let user input file name to use
-    txt = input()
-    if 'F' in txt:
-        file = input()
-        file = f"test/{file}"
+    while True:
+        source = input("Enter I or F: ").strip().upper()
 
-        if 'a' not in file:
+        if source == 'I':
             try:
-                with open(file, "r") as f:
-                    n = int(f.readline())
-                    par = list(map(int, f.readline().split()))
-                    print(compute_height(n, par))
-
-            except FileNotFoundError:
-                print("not found")
+                n = int(input("Enter element count: "))
+                values = np.asarray(list(map(int, input("Enter values: ").split())))
+                break
+            except ValueError:
+                print("Invalid input")
+            
+        elif source == 'F':
+            filename = input("Enter file name: ")
+            if 'a' in filename:
                 return
 
-    if 'I' in txt:
-        n = int(input())
-        par = list(map(int, input().split()))
-        print(compute_height(n, par))
+            try:
+                with open(f"./test/{filename}", "r") as file:
+                    n = int(file.readline())
+                    values = np.asarray(list(map(int, file.readline().split())))
+                break
+            except FileNotFoundError:
+                print("File not found")
+        else:
+            print("Invalid source")
+            return
+
+    max_height = compute_height(n, values)
+
+    print(max_height)
 
 
-# In Python, the default limit on recursion depth is rather low,
-# so raise it here for this problem. Note that to take advantage
-# of bigger stack, we have to launch the computation in a new thread.
 if __name__ == '__main__':
     sys.setrecursionlimit(10 ** 7)
     threading.stack_size(2 ** 27)
     threading.Thread(target=main).start()
- # max depth of recursion # new thread will get stack of such size
