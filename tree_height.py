@@ -1,33 +1,27 @@
 # python3
 import sys
-import threading
+from threading import Thread
 import numpy as np
 
+def get_height(i, values, heights):
+    if heights[i] != 0:
+        return heights[i]
+    if values[i] == -1:
+        heights[i] = 1
+    else:
+        heights[i] = get_height(values[i], values, heights) + 1
+    return heights[i]
 
-def compute_height(n: int, values: np.ndarray) -> int:
+def compute_height(n, values):
     max_height = 0
     heights = np.zeros(n, dtype=int)
-
-    def get_height(i: int) -> int:
-        if heights[i] != 0:
-            return heights[i]
-
-        if values[i] == -1:
-            heights[i] = 1
-        else:
-            heights[i] = get_height(values[i]) + 1
-
-        return heights[i]
-
     for i in range(n):
-        height = get_height(i)
+        height = get_height(i, values, heights)
         if height > max_height:
             max_height = height
-    
     return max_height
 
-
-def main() -> None:
+def read_input():
     while True:
         source = input("Enter I or F: ").strip().upper()
 
@@ -35,32 +29,32 @@ def main() -> None:
             try:
                 n = int(input("Enter element count: "))
                 values = np.asarray(list(map(int, input("Enter values: ").split())))
-                break
+                return n, values
             except ValueError:
                 print("Invalid input")
             
         elif source == 'F':
             filename = input("Enter file name: ")
             if 'a' in filename:
-                return
+                return None, None
 
             try:
                 with open(f"./test/{filename}", "r") as file:
                     n = int(file.readline())
                     values = np.asarray(list(map(int, file.readline().split())))
-                break
+                return n, values
             except FileNotFoundError:
                 print("File not found")
         else:
             print("Invalid source")
-            return
 
+def main():
+    n, values = read_input()
+    if n is None or values is None:
+        return
     max_height = compute_height(n, values)
-
     print(max_height)
-
 
 if __name__ == '__main__':
     sys.setrecursionlimit(10 ** 7)
-    threading.stack_size(2 ** 27)
-    threading.Thread(target=main).start()
+    Thread(target=main).start()
