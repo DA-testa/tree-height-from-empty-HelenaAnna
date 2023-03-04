@@ -22,31 +22,22 @@ def compute_height(n, parents):
     return height(root)
 
 def main():
-    # implement input form keyboard and from files
-    
-    # let user input file name to use, don't allow file names with letter a
-    # account for github input inprecision
-    
-    # input number of elements
-    # input values in one variable, separate with space, split these values in an array
-    # call the function and output it's result
-         if len(sys.argv) > 1:
+    # let user input file name to use
+    if len(sys.argv) > 1:
         # read input from file
         filename = sys.argv[1]
-        if 'a' in filename:
-            print("Invalid filename. File name cannot contain letter 'a'.")
-            return
         with open(filename, 'r') as f:
             n = int(f.readline().strip())
-            parents = list(map(int, f.readline().strip().lstrip().split()))
+            parents = list(map(int, f.readline().strip().split()))
     else:
         # read input from keyboard
-        try:
-            n = int(input())
-        except ValueError:
-            print("Invalid input. Please enter numeric values only.")
-            return
-        parents = list(map(int, input().strip().lstrip().split()))
+        while True:
+            try:
+                n = int(input())
+                break
+            except ValueError:
+                print("Invalid input. Please enter numeric values only.")
+        parents = list(map(int, input().strip().split()))
 
     max_height = compute_height(n, parents)
     print(max_height)
