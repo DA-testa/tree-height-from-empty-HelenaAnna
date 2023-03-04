@@ -30,25 +30,26 @@ def main():
     # input number of elements
     # input values in one variable, separate with space, split these values in an array
     # call the function and output it's result
-    try:
-        if len(sys.argv) > 1:
-            # read input from file
-            filename = sys.argv[1]
-            if 'a' in filename:
-                print("Invalid filename. File name cannot contain letter 'a'.")
-                return
-            with open(filename, 'r') as f:
-                n = int(f.readline().strip())
-                parents = list(map(int, f.readline().strip().split()))
-        else:
-            # read input from keyboard
+         if len(sys.argv) > 1:
+        # read input from file
+        filename = sys.argv[1]
+        if 'a' in filename:
+            print("Invalid filename. File name cannot contain letter 'a'.")
+            return
+        with open(filename, 'r') as f:
+            n = int(f.readline().strip())
+            parents = list(map(int, f.readline().strip().lstrip().split()))
+    else:
+        # read input from keyboard
+        try:
             n = int(input())
-            parents = list(map(int, input().strip().split()))
+        except ValueError:
+            print("Invalid input. Please enter numeric values only.")
+            return
+        parents = list(map(int, input().strip().lstrip().split()))
 
-        max_height = compute_height(n, parents)
-        print(max_height)
-    except ValueError:
-        print("Invalid input. Please enter numeric values only.")
+    max_height = compute_height(n, parents)
+    print(max_height)
 
 # In Python, the default limit on recursion depth is rather low,
 # so raise it here for this problem. Note that to take advantage
