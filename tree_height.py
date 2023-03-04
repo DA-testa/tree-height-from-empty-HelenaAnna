@@ -1,33 +1,60 @@
 # python3
-
 import sys
+import numpy as np
 import threading
-import numpy
 
+def get_height(i, values, heights):
+    if heights[i] != 0:
+        return heights[i]
+    if values[i] == -1:
+        heights[i] = 1
+    else:
+        heights[i] = get_height(values[i], values, heights) + 1
+    return heights[i]
 
-def compute_height(n, parents):
-    # Write this function
+def compute_height(n, values):
     max_height = 0
-    # Your code here
+    heights = np.zeros(n, dtype=int)
+    for i in range(n):
+        height = get_height(i, values, heights)
+        if height > max_height:
+            max_height = height
     return max_height
 
+def read_input():
+    while True:
+        source = input("Enter I or F: ").strip().upper()
+        if source == 'I':
+            try:
+                n = int(input("Enter element count: "))
+                values = np.asarray(list(map(int, input("Enter values: ").split())))
+                return n, values
+            except ValueError:
+                print("Invalid input")
+            
+        elif source == 'F':
+            filename = input("Enter file name: ")
+            if 'a' in filename.lower():
+                return 0, np.array([])
+
+            try:
+                with open(f"./test/{filename}", "r") as file:
+                    n = int(file.readline())
+                    values = np.asarray(list(map(int, file.readline().split())))
+                return n, values
+            except FileNotFoundError:
+                print("File not found")
+        else:
+            print("Invalid source")
 
 def main():
-    # implement input form keyboard and from files
-    
-    # let user input file name to use, don't allow file names with letter a
-    # account for github input inprecision
-    
-    # input number of elements
-    # input values in one variable, separate with space, split these values in an array
-    # call the function and output it's result
-    pass
+    n, values = read_input()
+    if n == 0 or values.size == 0:
+        return
+    max_height = compute_height(n, values)
+    print(max_height)
 
-# In Python, the default limit on recursion depth is rather low,
-# so raise it here for this problem. Note that to take advantage
-# of bigger stack, we have to launch the computation in a new thread.
-sys.setrecursionlimit(10**7)  # max depth of recursion
-threading.stack_size(2**27)   # new thread will get stack of such size
-threading.Thread(target=main).start()
-main()
-# print(numpy.array([1,2,3]))
+if __name__ == '__main__':
+    sys.setrecursionlimit(10 ** 7)
+    threading.stack_size(2 ** 27)
+    threading.Thread(target=main).start()
