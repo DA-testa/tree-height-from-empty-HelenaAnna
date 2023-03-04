@@ -24,7 +24,6 @@ def compute_height(n, values):
 def read_input():
     while True:
         source = input("Enter I or F: ").strip().upper()
-
         if source == 'I':
             try:
                 n = int(input("Enter element count: "))
