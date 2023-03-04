@@ -2,15 +2,12 @@
 
 import sys
 import threading
-import numpy
-
 
 def compute_height(n, parents):
     # Write this function
     max_height = 0
     # Your code here
     return max_height
-
 
 def main():
     # implement input form keyboard and from files
@@ -30,4 +27,4 @@ sys.setrecursionlimit(10**7)  # max depth of recursion
 threading.stack_size(2**27)   # new thread will get stack of such size
 threading.Thread(target=main).start()
 main()
-# print(numpy.array([1,2,3]))
+# print(array([1,2,3]))
