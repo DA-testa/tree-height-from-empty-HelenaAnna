@@ -55,7 +55,7 @@ def main():
     max_height = compute_height(n, values)
     print(max_height)
 
-    if __name__ == '__main__':
+if __name__ == '__main__':
     sys.setrecursionlimit(10 ** 7)
     threading.stack_size(2 ** 27)
     threading.Thread(target=main).start()
